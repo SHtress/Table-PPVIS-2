@@ -7,6 +7,7 @@ import model.Student;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import view.View;
 
 
 import javax.xml.parsers.DocumentBuilder;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class Controller {
     private Model model;
-
+    SEARCH_TYPE search;
     public Controller(Model model) {
         this.model = model;
     }
@@ -50,6 +51,22 @@ public class Controller {
         } catch (Exception exception) {
             exception.printStackTrace();
             return;
+        }
+    }
+
+    public enum SEARCH_TYPE {
+        CRITERIA_1("ПО ФАМИЛИИ И НОМЕРУ ГРУППЫ"),
+        CRITERIA_2("ПО ФАМИЛИИ И КОЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ"),
+        CRITERIA_3("ПО НОМЕРУ ГРУППЫ И КОЛЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ");
+
+        private final String label_text;
+
+        SEARCH_TYPE(String label_text) {
+            this.label_text = label_text;
+        }
+
+        public final String label_text() {
+            return label_text;
         }
     }
 
@@ -128,17 +145,20 @@ public class Controller {
     }
 
     public List search(String selectedItem, List<String> criteriaList) {
-        final String SURNAME = criteriaList.get(0),
-                CRITERIA_1 = "ПО ФАМИЛИИ И НОМЕРУ ГРУППЫ",
-                CRITERIA_2 = "ПО ФАМИЛИИ И КОЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ",
-                CRITERIA_3 = "ПО НОМЕРУ ГРУППЫ И КОЛЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ";
+        final String SURNAME = criteriaList.get(0);
         List<Student> studentList = getStudentList();
         List resultList;
-
         System.out.println(criteriaList.get(3));
         resultList = new ArrayList<Student>();
 
-        switch (selectedItem) {
+        if(selectedItem.equals(SEARCH_TYPE.CRITERIA_1.label_text))
+            search= SEARCH_TYPE.CRITERIA_1;
+        if(selectedItem.equals(SEARCH_TYPE.CRITERIA_2.label_text))
+            search= SEARCH_TYPE.CRITERIA_2;
+        if(selectedItem.equals(SEARCH_TYPE.CRITERIA_3.label_text))
+            search= SEARCH_TYPE.CRITERIA_3;
+
+        switch (search) {
             case CRITERIA_2:
                 final String MIN_SCORE = criteriaList.get(1);
                 final String MAX_SCORE = criteriaList.get(2);

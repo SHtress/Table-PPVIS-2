@@ -69,12 +69,8 @@ public class View {
         EXAM_NUM_LABEL_TEXT("Количество семестров: "),
         ENTRY_NUM_LABEL_TEXT("Сгенерировать записей: "),
         NEW_DOC_WINDOW_TITLE_TEXT("Создать новый документ"),
-        CRITERIA_1("ПО ФАМИЛИИ И НОМЕРУ ГРУППЫ"),
-        CRITERIA_2("ПО ФАМИЛИИ И КОЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ"),
-        CRITERIA_3("ПО НОМЕРУ ГРУППЫ И КОЛЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ"),
         CLOSE_BUTTON_LABEL_TEXT ("Хорошо"),
         CLOSE_BUTTON_DELETE_TEXT ("Дальше");
-
 
         private final String label_text;
 
@@ -83,6 +79,22 @@ public class View {
         }
 
         public String label_text() {
+            return label_text;
+        }
+    }
+
+    public enum SEARCH_TYPE {
+        CRITERIA_1("ПО ФАМИЛИИ И НОМЕРУ ГРУППЫ"),
+        CRITERIA_2("ПО ФАМИЛИИ И КОЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ"),
+        CRITERIA_3("ПО НОМЕРУ ГРУППЫ И КОЛЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ");
+
+        private final String label_text;
+
+        SEARCH_TYPE(String label_text) {
+            this.label_text = label_text;
+        }
+
+        public final String label_text() {
             return label_text;
         }
     }
@@ -309,14 +321,14 @@ public class View {
         private List<TextField> criteria1FieldList;
         private List<TextField> criteria2FieldList;
         private List<TextField> criteria3FieldList;
+        private SEARCH_TYPE search;
 
         public RequestElement(WindowType windowType) {
             criteriaComBox = new ComboBox();
-            criteriaComBox.getItems().addAll(INIT_WINDOW_LABEL.CRITERIA_1.label_text, INIT_WINDOW_LABEL.CRITERIA_2.label_text, INIT_WINDOW_LABEL.CRITERIA_3.label_text);
-            criteriaComBox.setValue(INIT_WINDOW_LABEL.CRITERIA_1.label_text);
+            criteriaComBox.getItems().addAll(SEARCH_TYPE.CRITERIA_1.label_text, SEARCH_TYPE.CRITERIA_2.label_text, SEARCH_TYPE.CRITERIA_3.label_text);
+            criteriaComBox.setValue(SEARCH_TYPE.CRITERIA_1.label_text);
             searchButton = new Button("Искать");
             criteriaChooser = new HBox();
-
             criteria1LabelList = new ArrayList<>();
             criteria1FieldList = new ArrayList<>();
             criteria2LabelList = new ArrayList<>();
@@ -374,13 +386,16 @@ public class View {
             final int CRITERIA_1_FIELD_NUMBER = 2;
             final int CRITERIA_2_FIELD_NUMBER = 3;
             final int CRITERIA_3_FIELD_NUMBER = 3;
-            final String CRITERIA_1 =("ПО ФАМИЛИИ И НОМЕРУ ГРУППЫ");
-            final String CRITERIA_2 =("ПО ФАМИЛИИ И КОЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ");
-            final String CRITERIA_3 =("ПО НОМЕРУ ГРУППЫ И КОЛЛИЧЕСТВУ ОБЩЕСТВЕННОЙ РАБОТЫ");
 
             grid.getChildren().clear();
             selectedItem = criteriaComBox.getSelectionModel().getSelectedItem().toString();
-            switch (selectedItem) {
+            if(selectedItem.equals(SEARCH_TYPE.CRITERIA_1.label_text))
+                search=SEARCH_TYPE.CRITERIA_1;
+            if(selectedItem.equals(SEARCH_TYPE.CRITERIA_2.label_text))
+                search=SEARCH_TYPE.CRITERIA_2;
+            if(selectedItem.equals(SEARCH_TYPE.CRITERIA_3.label_text))
+                search=SEARCH_TYPE.CRITERIA_3;
+            switch (search) {
                 case CRITERIA_1:
                     for (int i = 0; i < CRITERIA_1_FIELD_NUMBER; i++) {
                         grid.addRow(i,
