@@ -14,75 +14,78 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableElement {
-    private int                rowsOnPage,
-                               currentPage = 1,
-                               numberOfPages;
-    private Label              paginationLabel,
-                               itemsCountLabel;
-    private Button             resetSearchButton;
-    private TextField          rowsOnPageField;
+    private int rowsOnPage;
+    private int currentPage = 1;
+    private int numberOfPages;
+    private Label paginationLabel;
+    private Label itemsCountLabel;
+    private Button resetSearchButton;
+    private TextField rowsOnPageField;
     private TableView<Student> table;
-    private ToolBar            navigator,
-                               pagination;
-    private Pane               tableElement;
+    private ToolBar navigator;
+    private ToolBar pagination;
+    private Pane tableElement;
     private List<Student> defaultStudentList;
-    private ObservableList<Student> studentObsList,
-                                    curStudentObsList;
+    private ObservableList<Student> studentObsList;
+    private ObservableList<Student> curStudentObsList;
 
-    public TableElement(List<Student> studentList, int examNumber){
-        final int    TABLE_HEIGHT                 = 600,
-                     TABLE_WIDTH                  = 1460,
-                     DEFAULT_ROWS_ON_PAGE_NUMBER  = 17;
-        final String SNP_COLUMN_LABEL_TEXT        = "ФИО студэнта",
-                     GROUP_COLUMN_LABEL_TEXT      = "Группа",
-                     EXAMS_COLUMN_LABEL_TEXT      = "Общественная работа",
-                     EXAM_NAME_COLUMN_LABEL_TEXT  = "название",
-                     EXAM_SCORE_COLUMN_LABEL_TEXT = "часы",
-                     ROWS_ON_PAGE_LABEL_TEXT      = "Строк на странице: ",
-                     TO_BEGIN_BUTTON_LABEL_TEXT   = "<<",
-                     TO_LEFT_BUTTON_LABEL_TEXT    = "<",
-                     TO_RIGHT_BUTTON_LABEL_TEXT   = ">",
-                     TO_END_BUTTON_LABEL_TEXT     = ">>";
-        Property  sProperty       = new SimpleStringProperty();
-        Button    toBeginButton   = new Button(TO_BEGIN_BUTTON_LABEL_TEXT),
-                  toLeftButton    = new Button(TO_LEFT_BUTTON_LABEL_TEXT),
-                  toRightButton   = new Button(TO_RIGHT_BUTTON_LABEL_TEXT),
-                  toEndButton     = new Button(TO_END_BUTTON_LABEL_TEXT);
-        TableColumn<Student, String> snpCol   = new TableColumn<>(SNP_COLUMN_LABEL_TEXT),
-                                     groupCol = new TableColumn<>(GROUP_COLUMN_LABEL_TEXT),
-                                     examsCol = new TableColumn<>(EXAMS_COLUMN_LABEL_TEXT),
-                                     examNameCol;
-        List<TableColumn<Student, String>> examNumColList   = new ArrayList<>(),
-                                           examNameColList  = new ArrayList<>(),
-                                           examScoreColList = new ArrayList<>();
+    private int TABLE_HEIGHT = 600;
+    private int TABLE_WIDTH = 1460;
+    private int DEFAULT_ROWS_ON_PAGE_NUMBER = 17;
+
+    public enum INIT_WINDOW_LABEL {
+        SNP_COLUMN_LABEL_TEXT("ФИО студэнта"),
+        GROUP_COLUMN_LABEL_TEXT("Группа"),
+        EXAMS_COLUMN_LABEL_TEXT("Общественная работа"),
+        EXAM_SCORE_COLUMN_LABEL_TEXT("часы"),
+        ROWS_ON_PAGE_LABEL_TEXT("Строк на странице: "),
+        TO_BEGIN_BUTTON_LABEL_TEXT("<<"),
+        TO_LEFT_BUTTON_LABEL_TEXT("<"),
+        TO_RIGHT_BUTTON_LABEL_TEXT(">"),
+        TO_END_BUTTON_LABEL_TEXT(">>");
+
+        private final String label_text;
+
+        INIT_WINDOW_LABEL(String label_text) {
+            this.label_text = label_text;
+        }
+
+        public String label_text() {
+            return label_text;
+        }
+    }
+
+
+    public TableElement(List<Student> studentList, int examNumber) {
+        Property sProperty = new SimpleStringProperty();
+        Button toBeginButton = new Button(INIT_WINDOW_LABEL.TO_BEGIN_BUTTON_LABEL_TEXT.label_text);
+        Button toLeftButton = new Button(INIT_WINDOW_LABEL.TO_LEFT_BUTTON_LABEL_TEXT.label_text);
+        Button toRightButton = new Button(INIT_WINDOW_LABEL.TO_RIGHT_BUTTON_LABEL_TEXT.label_text);
+        Button toEndButton = new Button(INIT_WINDOW_LABEL.TO_END_BUTTON_LABEL_TEXT.label_text);
+        TableColumn<Student, String> snpCol = new TableColumn<>(INIT_WINDOW_LABEL.SNP_COLUMN_LABEL_TEXT.label_text);
+        TableColumn<Student, String> groupCol = new TableColumn<>(INIT_WINDOW_LABEL.GROUP_COLUMN_LABEL_TEXT.label_text);
+        TableColumn<Student, String> examsCol = new TableColumn<>(INIT_WINDOW_LABEL.EXAMS_COLUMN_LABEL_TEXT.label_text);
+        List<TableColumn<Student, String>> examNumColList = new ArrayList<>();
+        List<TableColumn<Student, String>> examScoreColList = new ArrayList<>();
 
         defaultStudentList = studentList;
-        studentObsList     = FXCollections.observableArrayList(defaultStudentList);
-        curStudentObsList  = FXCollections.observableArrayList();
+        studentObsList = FXCollections.observableArrayList(defaultStudentList);
+        curStudentObsList = FXCollections.observableArrayList();
 
         snpCol.setMinWidth(300);
         snpCol.setCellValueFactory(new PropertyValueFactory<>("alignSnp"));
         groupCol.setCellValueFactory(new PropertyValueFactory<>("group"));
-        for(int i=0; i < examNumber; i++){
+        for (int i = 0; i < examNumber; i++) {
             final int k = i;
-         //   examNameCol = new TableColumn(EXAM_NAME_COLUMN_LABEL_TEXT);
-         //   examNameCol.setMinWidth(250);
-         //   examNameColList.add(examNameCol);
-//            TableColumn<Student, String> studentStringTableColumn = examNameColList.get(i);
-//            studentStringTableColumn.setCellValueFactory(p -> {
-//                   // sProperty.setValue(String.valueOf(p.getValue().getExamName(k)));
-//                    return sProperty;
-//                }
-            //);
-            examScoreColList.add(new TableColumn(EXAM_SCORE_COLUMN_LABEL_TEXT));
+
+            examScoreColList.add(new TableColumn(INIT_WINDOW_LABEL.EXAM_SCORE_COLUMN_LABEL_TEXT.label_text));
             examScoreColList.get(i).setCellValueFactory(p -> {
-                    sProperty.setValue(String.valueOf(p.getValue().getExamScore(k)));
-                    return sProperty;
-                }
+                        sProperty.setValue(String.valueOf(p.getValue().getExamScore(k)));
+                        return sProperty;
+                    }
             );
-            examNumColList.add(new TableColumn(Integer.toString(i+1)));
+            examNumColList.add(new TableColumn(Integer.toString(i + 1)));
             examNumColList.get(i).getColumns().addAll(
-                  //  examNameColList.get(i),
                     examScoreColList.get(i));
             examsCol.getColumns().add(examNumColList.get(i));
         }
@@ -104,7 +107,7 @@ public class TableElement {
         pagination = new ToolBar(
                 itemsCountLabel,
                 new Separator(),
-                new Label(ROWS_ON_PAGE_LABEL_TEXT),
+                new Label(INIT_WINDOW_LABEL.ROWS_ON_PAGE_LABEL_TEXT.label_text),
                 rowsOnPageField,
                 new Separator(),
                 navigator,
@@ -124,74 +127,74 @@ public class TableElement {
 
         tableElement = new VBox();
         tableElement.getChildren().addAll(table,
-                                          pagination);
+                pagination);
 
         rowsOnPageField.setOnAction(ae -> setRowsOnPage());
         toBeginButton.setOnAction(ae -> goBegin());
         toLeftButton.setOnAction(ae -> goLeft());
         toRightButton.setOnAction(ae -> goRight());
         toEndButton.setOnAction(ae -> goEnd());
-        resetSearchButton.setOnAction(ae->{
+        resetSearchButton.setOnAction(ae -> {
             resetToDefaultItems();
             resetSearchButton.setVisible(false);
         });
     }
 
-    public Pane get(){
+    public Pane get() {
         return tableElement;
     }
 
-    public void rewriteDefaultList(List<Student> list){
+    public void rewriteDefaultList(List<Student> list) {
         defaultStudentList = list;
     }
 
-    public void resetToDefaultItems(){
+    public void resetToDefaultItems() {
         setObservableList(defaultStudentList);
     }
 
-    public void setObservableList(List<Student> list){
+    public void setObservableList(List<Student> list) {
         studentObsList = FXCollections.observableArrayList(list);
         resetSearchButton.setVisible(true);
 
         setRowsOnPage();
     }
 
-    private void setRowsOnPage(){
+    private void setRowsOnPage() {
         rowsOnPage = Integer.valueOf(rowsOnPageField.getText());
         currentPage = 1;
 
         refreshPage();
     }
 
-    private void goBegin(){
+    private void goBegin() {
         currentPage = 1;
         refreshPage();
     }
 
-    private void goLeft(){
-        if(currentPage > 1){
+    private void goLeft() {
+        if (currentPage > 1) {
             currentPage--;
         }
         refreshPage();
     }
 
-    private void goRight(){
-        if(currentPage < numberOfPages){
+    private void goRight() {
+        if (currentPage < numberOfPages) {
             currentPage++;
         }
         refreshPage();
     }
 
-    private void goEnd(){
+    private void goEnd() {
         currentPage = numberOfPages;
         refreshPage();
     }
 
-    private void refreshPage(){
+    private void refreshPage() {
         int fromIndex = (currentPage - 1) * rowsOnPage,
-            toIndex   =  currentPage      * rowsOnPage;
+                toIndex = currentPage * rowsOnPage;
 
-        if(toIndex > studentObsList.size()){
+        if (toIndex > studentObsList.size()) {
             toIndex = studentObsList.size();
         }
 
@@ -206,7 +209,7 @@ public class TableElement {
         refreshPaginationLabel();
     }
 
-    private void refreshPaginationLabel(){
+    private void refreshPaginationLabel() {
         numberOfPages = (studentObsList.size() - 1) / rowsOnPage + 1;
         paginationLabel.setText(currentPage + "/" + numberOfPages);
         itemsCountLabel.setText("/" + studentObsList.size() + "/");
